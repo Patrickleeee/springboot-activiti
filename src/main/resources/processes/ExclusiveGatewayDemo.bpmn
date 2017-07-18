@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/test" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="m1499234892093" name="" targetNamespace="http://www.activiti.org/test" typeLanguage="http://www.w3.org/2001/XMLSchema">
+  <process id="exclusiveGateway" isClosed="false" isExecutable="true" processType="None">
+    <startEvent id="_2" name="StartEvent"/>
+    <userTask activiti:candidateUsers="${auditService.createUsers(execution)}" activiti:exclusive="true" activiti:expression="${auditService.create(execution)}" id="_3" name="expense reimbursement"/>
+    <sequenceFlow id="_4" sourceRef="_2" targetRef="_3"/>
+    <exclusiveGateway gatewayDirection="Unspecified" id="expenseGateway" name="expense gateway"/>
+    <userTask activiti:candidateUsers="${auditService.financeUsers(execution)}" activiti:exclusive="true" activiti:expression="${auditService.financeAudit(execution)}" id="_6" name="finance audit"/>
+    <userTask activiti:candidateUsers="${auditService.dmUsers(execution)}" activiti:exclusive="true" activiti:expression="${auditService.dmAudit(execution)}" id="_7" name="dm audit"/>
+    <userTask activiti:candidateUsers="${auditService.gmUsers(execution)}" activiti:exclusive="true" activiti:expression="${auditService.gmAudit(execution)}" id="_8" name="gm audit"/>
+    <sequenceFlow id="_9" name="little" sourceRef="expenseGateway" targetRef="_7">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit.getExpense() < 5000}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_10" name="middle" sourceRef="expenseGateway" targetRef="_6">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${5000 <= audit.getExpense() && audit.getExpense() <= 10000}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_11" name="large" sourceRef="expenseGateway" targetRef="_8">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit.getExpense() > 10000}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_12" sourceRef="_3" targetRef="expenseGateway"/>
+    <endEvent id="_13" name="EndEvent"/>
+    <sequenceFlow id="_14" sourceRef="_6" targetRef="_13"/>
+    <sequenceFlow id="_15" sourceRef="_7" targetRef="_13"/>
+    <sequenceFlow id="_16" sourceRef="_8" targetRef="_13"/>
+  </process>
+  <bpmndi:BPMNDiagram documentation="background=#3C3F41;count=1;horizontalcount=1;orientation=0;width=842.4;height=1195.2;imageableWidth=832.4;imageableHeight=1185.2;imageableX=5.0;imageableY=5.0" id="Diagram-_1" name="New Diagram">
+    <bpmndi:BPMNPlane bpmnElement="exclusiveGateway">
+      <bpmndi:BPMNShape bpmnElement="_2" id="Shape-_2">
+        <omgdc:Bounds height="32.0" width="32.0" x="200.0" y="-15.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_3" id="Shape-_3">
+        <omgdc:Bounds height="55.0" width="85.0" x="170.0" y="80.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="expenseGateway" id="Shape-expenseGateway" isMarkerVisible="false">
+        <omgdc:Bounds height="32.0" width="32.0" x="195.0" y="185.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_6" id="Shape-_6">
+        <omgdc:Bounds height="55.0" width="85.0" x="175.0" y="320.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_7" id="Shape-_7">
+        <omgdc:Bounds height="55.0" width="85.0" x="-25.0" y="285.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_8" id="Shape-_8">
+        <omgdc:Bounds height="55.0" width="85.0" x="385.0" y="285.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_13" id="Shape-_13">
+        <omgdc:Bounds height="32.0" width="32.0" x="190.0" y="420.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_12" id="BPMNEdge__12" sourceElement="_3" targetElement="expenseGateway">
+        <omgdi:waypoint x="211.0" y="135.0"/>
+        <omgdi:waypoint x="211.0" y="185.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_15" id="BPMNEdge__15" sourceElement="_7" targetElement="_13">
+        <omgdi:waypoint x="60.0" y="312.5"/>
+        <omgdi:waypoint x="190.0" y="436.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_14" id="BPMNEdge__14" sourceElement="_6" targetElement="_13">
+        <omgdi:waypoint x="206.0" y="375.0"/>
+        <omgdi:waypoint x="206.0" y="420.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_16" id="BPMNEdge__16" sourceElement="_8" targetElement="_13">
+        <omgdi:waypoint x="385.0" y="312.5"/>
+        <omgdi:waypoint x="222.0" y="436.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_4" id="BPMNEdge__4" sourceElement="_2" targetElement="_3">
+        <omgdi:waypoint x="216.0" y="17.0"/>
+        <omgdi:waypoint x="216.0" y="80.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_9" id="BPMNEdge__9" sourceElement="expenseGateway" targetElement="_7">
+        <omgdi:waypoint x="195.0" y="201.0"/>
+        <omgdi:waypoint x="60.0" y="312.5"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_11" id="BPMNEdge__11" sourceElement="expenseGateway" targetElement="_8">
+        <omgdi:waypoint x="227.0" y="201.0"/>
+        <omgdi:waypoint x="385.0" y="312.5"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_10" id="BPMNEdge__10" sourceElement="expenseGateway" targetElement="_6">
+        <omgdi:waypoint x="211.0" y="217.0"/>
+        <omgdi:waypoint x="211.0" y="320.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
