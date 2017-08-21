@@ -20,6 +20,7 @@
 		<activiti.version>5.21.0</activiti.version>
 		<httpclient.version>4.5.3</httpclient.version>
 		<metrics.version>3.1.2</metrics.version>
+		<drools.version>7.0.0.Final</drools.version>
 	</properties>
 	<dependencies>
 		<!--springboot-->
@@ -65,11 +66,11 @@
 		</dependency>
 
 		<!--json-->
-		<dependency>
+		<!--<dependency>
 			<groupId>net.sf.json-lib</groupId>
 			<artifactId>json-lib</artifactId>
 			<version>2.4</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
@@ -99,6 +100,36 @@
 			<groupId>io.dropwizard.metrics</groupId>
 			<artifactId>metrics-httpclient</artifactId>
 			<version>${metrics.version}</version>
+		</dependency>
+
+		<!--drools-->
+		<dependency>
+			<groupId>org.kie</groupId>
+			<artifactId>kie-spring</artifactId>
+			<version>${drools.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-tx</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-compiler</artifactId>
+			<version>${drools.version}</version>
 		</dependency>
 
 	</dependencies>
