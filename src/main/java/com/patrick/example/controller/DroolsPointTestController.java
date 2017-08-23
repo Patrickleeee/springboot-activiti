@@ -30,7 +30,7 @@ public class DroolsPointTestController {
         KieSession kieSession = kContainer.newKieSession("ksession-rules");
 
         final PointDomain pointDomain = new PointDomain();
-        pointDomain.setUserName("hello kity");
+        pointDomain.setUserName("hello kitty");
         pointDomain.setBackMondy(100d);
         pointDomain.setBuyMoney(500d);
         pointDomain.setBackNums(1);
