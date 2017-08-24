@@ -18,6 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.io.UnsupportedEncodingException;
 import java.sql.*;
 import java.text.ParseException;
@@ -342,11 +343,12 @@ public class BatchUtils {
                 map.put("frms_flow_id", "125");
                 map.put("frms_customer_id", "homefax");
 
+                map.put("frms_dp_id", is.getString("frms_dp_id"));
                 map.put("frms_dp_lst12_avg_amt", is.getString("frms_dp_lst12_avg_amt")); // >= 20000
                 map.put("frms_dp_lst12_avg_rentamt", 10000); // 不大于月均销售额的一半
                 map.put("frms_dp_booth_lev", is.getInt("frms_dp_booth_lev")); // < 9
                 map.put("frms_dp_lst12_amt0_mth", 1); // <= 3
-                map.put("frms_dp_opentime", sdf.parse(is.getString("frms_dp_opentime"))); // 距今月份大于12
+                map.put("frms_dp_opentime", sdf.parse(is.getString("frms_dp_opentime") == null ? "2014-06-21 00:00:00" : is.getString("frms_dp_opentime"))); // 距今月份大于12
                 map.put("frms_dp_lst18_sale_amt", is.getDouble("frms_dp_lst18_sale_amt")); // 近6月同比销售额下降幅度
                 map.put("frms_dp_lst12_sale_amt", is.getDouble("frms_dp_lst12_sale_amt"));
                 map.put("frms_dp_lst6_sale_amt", is.getDouble("frms_dp_lst6_sale_amt"));
@@ -411,9 +413,14 @@ public class BatchUtils {
         return unicode;
     }
 
-    @Scheduled(initialDelay = 1000,fixedDelay=3000)
+    @Scheduled(initialDelay = 1000,fixedDelay=60000)
     public void timerInit() {
         System.out.println("init : " + 1);
+    }
+
+    @PostConstruct
+    public void postInit() {
+        System.out.println("post : " + 2);
     }
 
     public static void main(String[] args) throws SQLException, ParseException {
