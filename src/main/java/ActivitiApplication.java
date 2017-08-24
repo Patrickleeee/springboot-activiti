@@ -11,15 +11,20 @@ import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * Created by jery on 2016/11/23.
+ * Desciption main app
+ * Create By  li.bo
+ * CreateTime 2017/8/21 17:42
+ * UpdateTime 2017/8/21 17:42
  */
 
 @SpringBootApplication
 @ComponentScan("com.patrick.example")
 @EnableJpaRepositories("com.patrick.example.dao")
 @EntityScan("com.patrick.example.model")
+@EnableScheduling
 public class ActivitiApplication {
 	@Autowired
 	private CompRepository compRepository;
