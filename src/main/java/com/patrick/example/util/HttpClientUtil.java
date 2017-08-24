@@ -111,7 +111,8 @@ public class HttpClientUtil {
             post.setEntity(s);
             HttpResponse res = client.execute(post);
             System.out.println(res.toString());
-            return "hello world";
+            String result = EntityUtils.toString(res.getEntity());// 返回json格式：
+            return result;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

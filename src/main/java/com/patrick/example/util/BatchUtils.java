@@ -1,10 +1,12 @@
 package com.patrick.example.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -28,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.apache.coyote.http11.Constants.a;
 
 /**
  * Desciption
@@ -415,7 +419,7 @@ public class BatchUtils {
 
     @Scheduled(initialDelay = 1000,fixedDelay=60000)
     public void timerInit() {
-        System.out.println("init : " + 1);
+        System.out.println("init : " + sdf.format(new java.util.Date()));
     }
 
     @PostConstruct
@@ -423,9 +427,34 @@ public class BatchUtils {
         System.out.println("post : " + 2);
     }
 
+    /**
+     * send request to gootoday for getting data
+     * @param method
+     * @param idName
+     * @param id
+     * @return
+     */
+    public JSONObject sendRequest2Today(String method, String idName, String id) {
+        String today_url = "http://localhost:8080/web/portal";
+        org.activiti.engine.impl.util.json.JSONObject jo = new org.activiti.engine.impl.util.json.JSONObject();
+        jo.put("method", method);
+        jo.put(idName, id);
+
+        String result = HttpClientUtil.doPost(today_url, jo);
+        System.out.println(result);
+
+        JSONObject resultObject = JSONObject.parseObject(result);
+        if (!StringUtils.equals("0000", resultObject.getString("state"))) {
+            return null;
+        }
+
+        return resultObject.getJSONObject("data");
+
+    }
+
     public static void main(String[] args) throws SQLException, ParseException {
-        /*BatchUtils b = new BatchUtils();
-        createBatch();*/
+        BatchUtils b = new BatchUtils();
+        System.out.println(b.sendRequest2Today("factoryAccess", "factoryId", "19").toString());
 
     }
 }
