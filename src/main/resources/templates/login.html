@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>家金宝业务管理系统</title>
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" href="fonts/iconfont.css"/>
+    <link rel="stylesheet" href="css/uniform/default.css"/>
+    <link rel="stylesheet" href="css/common.css"/>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/untils.js"></script>
+</head>
+
+<body>
+    <div class="body">
+        <div class="slogan-area">
+            <div class="slogan">
+                <span>家金宝业务管理系统</span>
+            </div>
+        </div>
+        <div class="login-area">
+            <div class="login">
+                <form  action="/" id='loginForm' method="POST">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="iconfont icon-user"></i>
+                            </div>
+                            <input type="text" name="username" class="form-control" value="" placeholder="请输入用户名"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="iconfont icon-pwd"></i>
+                            </div>
+                            <input type="password" name="password" class="form-control" placeholder="请输入密码"/>
+                        </div>
+                    </div>
+                    <div class="form-group code-box">
+                        <span class="login-code-input">
+                            <input type="text" id="captcha" name="captcha" class="form-control" datatype="*" nullmsg="请填写验证码！"/>
+                        </span>
+                        <span id="codeImage" class="login-code-img">
+                            <img id="img" src="/kaptcha" />
+                        </span>
+                        <span class="login-code-change" id="changeImg"><a href="JavaScript:reLoadImg();">换一张</a><i class="iconfont"></i></span>
+                    </div>
+                    <div class="remember">
+                        <div class="uniform">
+                            <label class="uniform-label">
+                                <input name="remberPwd" type="checkbox" value="记住密码"/>
+                                <span class="uniform-value">记住密码</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" role="button" id="loginBtn">登录</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="login-footer">
+            <span>Copyright 2017 Homefax.cn | All rights reserved</span>
+        </div>
+
+        <!--加载动画-->
+        <div class="loading">
+            <div class="loading-icon">
+                <img src="images/oval.svg" alt=""/>
+                <span>请稍后．．．</span>
+            </div>
+        </div>
+        <!--警示窗toast-->
+        <div class="alert alert-success" id="alertSuccess" role="alert">
+            <span class="text"></span>
+        </div>
+        <div class="alert alert-warning" id="alertWarning" role="alert">
+            <span  class="text"></span>
+        </div>
+        <div class="alert alert-danger" id="alertDanger" role="alert">
+            <span class="text"></span>
+        </div>
+    </div>
+
+    <script src="js/uniform/jquery.uniform.standalone.js"></script>
+
+    <script th:inline="javascript">
+
+        function reLoadImg()
+        {
+            document.getElementById("img").src="/kaptcha";
+        };
+
+        $(function () {
+            var message = [[${message}]]
+            if(message){
+                toastShow('#alertSuccess',message);
+            }
+        })
+    </script>
+</body>
+
+</html>

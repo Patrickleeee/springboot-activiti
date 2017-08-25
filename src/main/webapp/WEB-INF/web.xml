@@ -1,0 +1,53 @@
+<!DOCTYPE web-app PUBLIC
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+    <display-name>JJB Management System</display-name>
+    <servlet>
+        <servlet-name>Kaptcha</servlet-name>
+        <servlet-class>com.google.code.kaptcha.servlet.KaptchaServlet</servlet-class>
+        <!-- 设置是否有边框 -->
+        <init-param>
+            <param-name>kaptcha.border</param-name>
+            <param-value>yes</param-value>
+        </init-param>
+        <!-- 设置边框颜色-->
+        <init-param>
+            <param-name>kaptcha.border.color</param-name>
+            <param-value>105,179,90</param-value>
+        </init-param>
+
+        <!-- 设置字体颜色 -->
+        <init-param>
+            <param-name>kaptcha.textproducer.font.color</param-name>
+            <param-value>black</param-value>
+        </init-param>
+        <!-- 设置验证码宽度 -->
+        <init-param>
+            <param-name>kaptcha.image.width</param-name>
+            <param-value>125</param-value>
+        </init-param>
+        <!-- 设置验证码高度 -->
+        <init-param>
+            <param-name>kaptcha.image.height</param-name>
+            <param-value>44</param-value>
+        </init-param>
+
+        <!-- 设置字体个数 -->
+        <init-param>
+            <param-name>kaptcha.textproducer.char.length</param-name>
+            <param-value>4</param-value>
+        </init-param>
+        <!-- 设置字体样式 -->
+        <init-param>
+            <param-name>kaptcha.textproducer.font.names</param-name>
+            <param-value>宋体,楷体,微软雅黑</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Kaptcha</servlet-name>
+        <url-pattern>/kaptcha</url-pattern>
+    </servlet-mapping>
+</web-app>
