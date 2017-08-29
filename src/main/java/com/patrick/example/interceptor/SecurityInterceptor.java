@@ -1,3 +1,4 @@
+/*
 package com.patrick.example.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,3 +66,4 @@ public class SecurityInterceptor extends AbstractSecurityInterceptor implements 
         return this.securityMetadataSource;
     }
 }
+*/
