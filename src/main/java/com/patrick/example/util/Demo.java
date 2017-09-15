@@ -7,7 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import org.apache.commons.io.IOUtils;
 /**
- * Desciption
+ * Desciption 调用post请求（中文不乱码）
  * Create By  li.bo
  * CreateTime 2017/9/14 12:21
  * UpdateTime 2017/9/14 12:21
