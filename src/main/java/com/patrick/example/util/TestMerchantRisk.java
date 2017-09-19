@@ -1,7 +1,5 @@
 package com.patrick.example.util;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
@@ -18,20 +16,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Desciption
@@ -42,6 +37,8 @@ import java.util.regex.Pattern;
 @Component
 public class TestMerchantRisk {
 
+    public static final String SH_15 = "SH15";
+    public static final String HUIFA_QIANKUAN = "huifa_qiankuan";
     private RestTemplate template;
     Connection conn;
     String driver = "com.mysql.jdbc.Driver";// the MySQL driver
@@ -122,7 +119,7 @@ public class TestMerchantRisk {
 
         try {
             con = batchUtils.getConnection();
-            String sql = "SELECT DISTINCT(a.PARTNER_CODE), b.*, a.match_huifa AS match_huifa FROM test_jinqiao_mall a LEFT JOIN test_merchant b ON b.merchant_id = a.PARTNER_CODE";
+            String sql = "SELECT DISTINCT (a.PARTNER_CODE), b.*, c.huifa_zhixin, c.huifa_shixin, c.huifa_zuifan, c.huifa_qianshui, c.huifa_qiankuan FROM test_jinqiao_mall a LEFT JOIN test_merchant b ON b.merchant_id = a.PARTNER_CODE LEFT JOIN test_jinqiao_huifa_copy c ON c.shop_id = a.shop_id";
             ps = con.prepareStatement(sql);
             /*for (int i = 0; i < 100; i++) {
                 //关键方法1：打包
@@ -146,11 +143,25 @@ public class TestMerchantRisk {
                 map.put("frms_sh_lst12_sal_amt", is.getLong("frms_sh_lst12_sal_amt"));
                 map.put("frms_sh_lst18_sal_amt", is.getLong("frms_sh_lst18_sal_amt"));
                 map.put("frms_sh_lst12_rent_amt", is.getLong("frms_sh_lst12_rent_amt"));
-                map.put("frms_sh_if_lawxp_black", is.getInt("match_huifa"));
+//                map.put("frms_sh_if_lawxp_black", is.getInt("match_huifa"));
                 map.put("frms_sh_id", is.getString("merchant_id"));
                 map.put("frms_sh_hcomplain_cnt", is.getInt("frms_sh_hcomplain_cnt"));
                 map.put("frms_sh_mcomplain_cnt", is.getInt("frms_sh_mcomplain_cnt"));
                 map.put("frms_sh_overdue_balance_amt", is.getLong("frms_sh_overdue_balance_amt"));
+
+                // 汇法-接口数据
+                map.put("frms_huifa_zhixin", is.getInt("huifa_zhixin"));
+                map.put("frms_huifa_shixin", is.getInt("huifa_shixin"));
+                map.put("frms_huifa_zuifan", is.getInt("huifa_zuifan"));
+                map.put("frms_huifa_qianshui", is.getInt("huifa_qianshui"));
+                map.put("frms_huifa_qiankuan", is.getInt("huifa_qiankuan"));
+
+                /*map.put("huifa_xiangao", 1);
+                map.put("huifa_xianchu", 1);
+                map.put("huifa_caipan", 1);
+                map.put("huifa_shenpan", 1);
+                map.put("huifa_weifa", 1);
+                map.put("huifa_feizheng", 1);*/
 
                 System.out.println(map.toString());
 
@@ -159,40 +170,39 @@ public class TestMerchantRisk {
                 int isAccess = isAccess(riskResult, "if_sh_access");
                 System.out.println("风控结果：" + isAccess);
 
-                /*String merchantId = is.getString("merchant_id");
+                String merchantId = is.getString("merchant_id");
                 ps = con.prepareStatement("UPDATE test_jinqiao_mall SET shaccess=" + isAccess + " WHERE PARTNER_CODE=" + merchantId);
                 int t = ps.executeUpdate();
-                System.out.println("插入数据库结果：" + t);*/
+                System.out.println("插入数据库结果：" + t);
 
                 // 插入风控结果表test_jinqiao_sh_result
                 Double score = 0.0;
                 if (isAccess == 1) {
                     score = getScore(riskResult, "result");
                 }
-                String merchantId = is.getString("merchant_id");
                 ps = con.prepareStatement("INSERT INTO test_jinqiao_sh_rules VALUES("+ merchantId+","
                         +isAccess+","
                         +score+","
-                        +getRules(riskResult, "SH01")+","
-                        +getRules(riskResult, "SH02")+","
-                        +getRules(riskResult, "SH03")+","
-                        +getRules(riskResult, "SH04")+","
-                        +getRules(riskResult, "SH05")+","
-                        +getRules(riskResult, "SH06")+","
-                        +getRules(riskResult, "SH07")+","
-                        +getRules(riskResult, "SH08")+","
-                        +getRules(riskResult, "SH09")+","
-                        +getRules(riskResult, "SH10")+","
-                        +getRules(riskResult, "SH11")+","
-                        +getRules(riskResult, "SH12")+","
-                        +getRules(riskResult, "SH13")+","
-                        +getRules(riskResult, "SH14")+","
-                        +getRules(riskResult, "SH15")+","
+                        +getRules(riskResult, "SH01 :")+","
+                        +getRules(riskResult, "SH02 :")+","
+                        +getRules(riskResult, "SH03 :")+","
+                        +getRules(riskResult, "SH04 :")+","
+                        +getRules(riskResult, "SH05 :")+","
+                        +getRules(riskResult, "SH06 :")+","
+                        +getRules(riskResult, "SH07 :")+","
+                        +getRules(riskResult, "SH08 :")+","
+                        +getRules(riskResult, "SH09 :")+","
+                        +getRules(riskResult, "SH10 :")+","
+                        +getRules(riskResult, "SH11 :")+","
+                        +getRules(riskResult, "SH12 :")+","
+                        +getRules(riskResult, "SH13 :")+","
+                        +getRules(riskResult, "SH14 :")+","
+                        +getRules(riskResult, "SH15 :")+","
                         +"NOW()"+
                         ")");
 
-                int t = ps.executeUpdate();
-                System.out.println("插入数据库结果：" + t);
+                int t2 = ps.executeUpdate();
+                System.out.println("插入数据库结果：" + t2);
 
             }
         } finally {
@@ -240,6 +250,12 @@ public class TestMerchantRisk {
 
     }
 
+    /**
+     * 准入通过后，获取最终评分
+     * @param riskResult
+     * @param type
+     * @return
+     */
     public Double getScore(String riskResult, String type) {
         if (StringUtils.isBlank(riskResult)) {
             return 0.0;
@@ -280,6 +296,7 @@ public class TestMerchantRisk {
             ps.addBatch();
             ResultSet is = ps.executeQuery();
             while (is.next()) {
+                // 店铺所有规则需要触发，方可准入
                 Map<String, Object> map = Maps.newHashMap();
                 map.put("frms_biz_code", "PAY.REG");
                 map.put("frms_user_id", is.getString("frms_dp_id"));
@@ -299,21 +316,23 @@ public class TestMerchantRisk {
                 map.put("frms_dp_lst30d_sale_amt", is.getLong("frms_dp_lst30d_sale_amt"));
                 map.put("frms_dp_booth_lev", is.getInt("frms_dp_booth_lev"));
 
-                // 无数据，默认值设置不触发规则
+                // 无数据，默认值设置触发规则
                 map.put("frms_dp_lst2_firstoverdue3d_per", 0.2);
                 map.put("frms_dp_lst2_first_refund_cnt", 5);
 
+                /*// 此4条，实际入参中传入，与四个准入结果冲突
                 map.put("frms_gc_id", is.getString("frms_gc_id"));
                 map.put("frms_sc_id", is.getString("frms_sc_id"));
                 map.put("frms_sh_id", is.getString("frms_sh_id"));
-                map.put("frms_pp_id", is.getString("frms_pp_id"));
+                map.put("frms_pp_id", is.getString("frms_pp_id"));*/
 
-                map.put("frms_gc_id_access", is.getString("gcaccess")=="1"? true : false);
+                // 实际决策流传入的是四个ID，此处传入决策结果
+                map.put("frms_gc_id_access", is.getLong("gcaccess")==1? true : false);
                 map.put("frms_sc_id_access", true);
                 map.put("frms_sh_id_access", is.getString("shaccess")=="1"? true : false);
-                map.put("frms_pp_id_access", is.getString("ppaccess")=="1"? true : false);
+                map.put("frms_pp_id_access", is.getLong("ppaccess")==1? true : false);
 
-
+                System.out.println("ttttt:" + is.getString("gcaccess"));
 
                 System.out.println(map.toString());
 
@@ -322,13 +341,14 @@ public class TestMerchantRisk {
                 int isAccess = isAccess(riskResult, "if_dp_access");
                 System.out.println("风控结果：" + isAccess);
 
-                /*String shopId = is.getString("frms_dp_id");
+                String shopId = is.getString("frms_dp_id");
+                // 风控准入结果存入test_jinqiao_mall中
                 ps = con.prepareStatement("UPDATE test_jinqiao_mall SET dpaccess=" + isAccess + " WHERE shop_id=" + shopId);
                 int t = ps.executeUpdate();
-                System.out.println("插入数据库结果：" + t);*/
+                System.out.println("插入数据库结果：" + t);
 
-                String shopId = is.getString("frms_dp_id");
-                ps = con.prepareStatement("INSERT INTO test_jinqiao_rules VALUES("+ shopId+","
+                // 风控策略，触发规则存入test_jinqiao_rules中
+                ps = con.prepareStatement("INSERT INTO test_jinqiao_dp_rules VALUES("+ shopId+","
                         +isAccess+","
                         +getRules(riskResult, "DP01")+","
                         +getRules(riskResult, "DP02")+","
@@ -336,10 +356,12 @@ public class TestMerchantRisk {
                         +getRules(riskResult, "DP04")+","
                         +getRules(riskResult, "DP05")+","
                         +getRules(riskResult, "DP06")+","
+                        +getRules(riskResult, "DP09")+","
+                        +getRules(riskResult, "DP12")+","
                         +"now())");
 
-                int t = ps.executeUpdate();
-                System.out.println("插入数据库结果：" + t);
+                int t2 = ps.executeUpdate();
+                System.out.println("插入数据库结果：" + t2);
 
             }
         } finally {
@@ -353,7 +375,7 @@ public class TestMerchantRisk {
      * @throws ParseException
      * @throws IOException
      */
-    @Test
+//    @Test
     public void huifaService() throws SQLException, ParseException, IOException {
 
         Connection con;
@@ -363,7 +385,7 @@ public class TestMerchantRisk {
 
         try {
             con = batchUtils.getConnection();
-            String sql = "select * from test_jinqiao_mall";
+            String sql = "select DISTINCT(PARTNER_CODE) as merchantId, a.* from test_jinqiao_mall a";
             ps = con.prepareStatement(sql);
             /*for (int i = 0; i < 100; i++) {
                 //关键方法1：打包
@@ -393,9 +415,9 @@ public class TestMerchantRisk {
                     int huifa_feizheng = fxcontent.getJSONArray("feizheng") == null? 0:fxcontent.getJSONArray("feizheng").size();
                     int huifa_qiankuan = fxcontent.getJSONArray("qiankuan") == null? 0:fxcontent.getJSONArray("qiankuan").size();
 
-                    String shopId = is.getString("shop_id");
+                    String merchantId = is.getString("merchantId");
 //                    ps = con.prepareStatement("UPDATE test_jinqiao_mall SET match_huifa=" + hf + " WHERE shop_id=" + shopId);
-                    ps = con.prepareStatement("INSERT INTO test_jinqiao_huifa VALUES("+ shopId+","
+                    ps = con.prepareStatement("INSERT INTO test_jinqiao_huifa VALUES("+ merchantId+","
                             +huifa_zhixin+","
                             +huifa_shixin+","
                             +huifa_xiangao+","
